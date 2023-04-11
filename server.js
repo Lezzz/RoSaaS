@@ -12,6 +12,8 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ extended: true }));
 
+require('./routes')(app);
+
 mongoose.set('strictQuery', true);
 
 //connect our database using Promises
@@ -19,9 +21,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
     .then(() => {
         console.log('Connected to MongoDB');
         const port = process.env.PORT || 4242;
-        //connect our routes
-        app.use('/api/auth', require('./routes/auth'));
-        app.use('/api/openai', require('./routes/openai'));
+        
         app.use(ErrorHandler)
 
         app.listen(port, () => {

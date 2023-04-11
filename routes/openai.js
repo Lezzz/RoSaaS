@@ -1,8 +1,5 @@
-const express = require('express');
-const router = express.Router();
-
 const { summarize } = require('../controllers/openai');
 
-router.post('/summary', summarize);
-
-module.exports = router;
+module.exports = function(app){
+    app.post('/summary', summarize);
+}
