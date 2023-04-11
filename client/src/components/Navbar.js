@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Link, Typography, useTheme } from '@mui/material';
+import axios from 'axios';
 
 const Navbar = () => {
     const theme = useTheme();
-    const loggedIn = JSON.parse(localStorage.getItem("authToken"));
+    const [loggedIn, setLoggedIn] = useState(JSON.parse(localStorage.getItem("authToken")));
 
     const logoutHandler = async () => {
         localStorage.removeItem("authToken");
         window.location.reload();
     };
+
+    const checkRefresh = async () => {
+
+        try {
+            setLoggedIn(JSON.parse(localStorage.getItem("authToken")));
+            const token = await axios.get("/refresh-token");
+            if (!token.data) {
+                 localStorage.removeItem("authToken");
+                 setLoggedIn(false);
+                 logoutHandler();
+            }
+        } catch (err) {
+            console.error(err);
+        }
+
+    }
+
+    checkRefresh();
 
     return (
         <Box width= "100%" p="1rem 6%" backgroundColor = {theme.palette.background.alt} textAlign ="center" sx={{boxShadow: 3, mb: 2}}>  

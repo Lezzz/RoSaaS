@@ -66,4 +66,19 @@ exports.logout = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Logged out' });
 };
 
+exports.getRefreshToken = async (req, res) => {
+    try {
+        const getToken = req.cookies.refreshToken;
+
+        if (getToken) {
+            const token = jwt.verify(getToken, process.env.JWT_REFRESH_SECRET);
+            const accessToken = jwt.sign({ id: token.id }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_EXPIRE });
+            res.status(200).json({ success: true, accessToken });
+        }
+
+    } catch {
+        next(err);
+    }
+};
+
 
