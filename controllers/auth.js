@@ -58,7 +58,12 @@ exports.login = async (req, res, next) => {
 };
 
 exports.logout = async (req, res) => {
+    // Add a line to clear the auth token
+    const token = req.headers.authorization;
+
+    // Rest of your code
     res.clearCookie('refreshToken');
     return res.status(200).json({ success: true, message: 'Logged out' });
 };
+
 
