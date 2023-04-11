@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Link, Typography, useTheme, useMediaQuery, Collapse, Alert, TextField, Button, Card } from '@mui/material';
+import { Box, Link, Typography, useTheme, useMediaQuery, Collapse, Alert, TextField, Button, Card, Stack } from '@mui/material';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -42,16 +42,20 @@ const SummaryScreen = () => {
         </Collapse>
 
         <form onSubmit={summaryHandler}>
-            <Typography variant="h3">Text Summarizer</Typography>
-            <TextField placeholder ="Enter text:" margin="normal" required fullWidth value ={text} onChange={(e) => setText(e.target.value)}/>
-            <Button fullWidth variant ="contained" type="submit" size="large" sx ={{color:"white", mt:2}}>Summarize</Button>  
+            <Typography variant="h3" mb={2}>Text Summarizer</Typography>
+            <Stack direction="row" spacing={1}>
+                <Box width="87%">
+                    <TextField multiline ="true" placeholder ="Enter text:" margin="normal" required fullWidth value ={text} onChange={(e) => setText(e.target.value)}/>
+                </Box>  
+                <Button disableElevation variant ="contained" type="submit" sx ={{color:"white"}}>Summarize</Button>
+            </Stack>   
         </form>
         { summary ? 
         <Card sx={{mt:4, p:2, border: 1, boxShadow:0, borderColor:"neutral.medium", borderRadius: 2, height: "500px", bgcolor: "background.default"}}>
             <Typography variant="h3">{summary}</Typography>
         </Card> 
         : <Card sx={{mt:4, p:2, border: 1, boxShadow:0, borderColor:"neutral.medium", borderRadius: 2, height: "500px", bgcolor: "background.default"}}>
-                <Typography variant="h3">Summary will appear here:</Typography>
+                <Typography variant="h3" color="neutral.main" sx={{textAlign: "center", verticalAlign:"middle", lineHeight:"450px"}}>Summary will appear here:</Typography>
             </Card>}
         <Typography variant="body1" sx={{mt: 2}}>Not the tool you were looking for? <Link href="/">Go back</Link></Typography>
         
