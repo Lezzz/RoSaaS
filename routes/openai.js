@@ -1,5 +1,5 @@
 const { summarize } = require('../controllers/openai');
 
 module.exports = function(app){
-    app.post('/summary', summarize);
+    app.post('/api/openai/summary', summarize);
 }
