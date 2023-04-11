@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Link, Typography, useTheme, useMediaQuery, Collapse, Alert, TextField, Button, Card, Stack } from '@mui/material';
+import { Box, Typography, Card, Stack } from '@mui/material';
 import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
 import ChatRoundedIcon from '@mui/icons-material/ChatRounded';
+import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
 import FormatAlignLeftRoundedIcon from '@mui/icons-material/FormatAlignLeftRounded';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +11,7 @@ const HomeScreen = () => {
 
     return (
         <Box p={2}>
-            <Typography sx={{ fontWeight: "bold"}} variant="h4" mb={2}>Text Generation</Typography>
+            <Typography sx={{ fontWeight: "bold"}} variant="h4" my={2}>Text Generation</Typography>
             <Stack direction="row" spacing={6}>
                 <Card onClick={() => navigate("/summary")}
                     sx={{boxShadow:2, borderRadius:5, height:190, width:200, '&:hover':{border:2, boxShadow:0, borderColor:"primary.dark", cursor:"pointer"}}}>
@@ -38,6 +39,25 @@ const HomeScreen = () => {
                 </Card>
             </Stack>
 
+            <Typography sx={{ fontWeight: "bold"}} variant="h4" ml={4} mt={6} mb={2}>Code Generation</Typography>
+                <Card onClick={() => navigate("/jsConvert")}
+                    sx={{boxShadow:2, borderRadius:5, height:190, width:200, '&:hover':{border:2, boxShadow:0, borderColor:"primary.dark", cursor:"pointer"}}}>
+                    <DescriptionRoundedIcon sx={{ml: 2, fontSize: 40, color: "primary.main", mt: 2}}/>
+                    <Stack p={2} po={0}>
+                        <Typography variant="h5" sx={{ fontWeight: "bold"}}>Javascript converter</Typography>
+                        <Typography variant="h6">English to Javascript code!</Typography>
+                    </Stack>
+                </Card>
+
+                <Typography sx={{ fontWeight: "bold"}} variant="h4" ml={4} mt={6} mb={2}>Image Generation</Typography>
+                <Card onClick={() => navigate("/imageGen")}
+                    sx={{boxShadow:2, borderRadius:5, height:190, width:200, '&:hover':{border:2, boxShadow:0, borderColor:"primary.dark", cursor:"pointer"}}}>
+                    <ImageSearchRoundedIcon sx={{ml: 2, fontSize: 40, color: "primary.main", mt: 2}}/>
+                    <Stack p={2} po={0}>
+                        <Typography variant="h5" sx={{ fontWeight: "bold"}}>Image Generator</Typography>
+                        <Typography variant="h6">Generate images from a simple prompt.</Typography>
+                    </Stack>
+                </Card>
         </Box>
     )
 }
