@@ -39,14 +39,14 @@ exports.login = async (req, res, next) => {
 
     try { 
         //check that user already exists by email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select('+password');
         if (!user) {
             return next(new ErrorResponse('Invalid credentials', 401));
         }
 
 
         //check that password matches
-        const isMatch = await user.matchPassword(password);
+        const isMatch = await user.matchPasswords(password);
         if (!isMatch) {
             return next(new ErrorResponse('Invalid credentials', 401));
         }
