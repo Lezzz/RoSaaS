@@ -4,22 +4,22 @@ import { useState } from 'react';
 import axios from 'axios';
 
 
-const SummaryScreen = () => {
+const ChatbotScreen = () => {
     const theme = useTheme();
     const isNotMobile = useMediaQuery("(min-width: 1000px)");
 
     const [text , setText] = useState("");
     const [error, setError] = useState("");
-    const [summary, setSummary] = useState("");
+    const [response, setResponse] = useState("");
 
-    const summaryHandler = async (e) => {
+    const responseHandler = async (e) => {
         e.preventDefault();
       
         try {
-          const { data } = await axios.post("/summary", {text});
-          setSummary(data);
+          const { data } = await axios.post("/chatbot", {text});
+          setResponse(data);
         } catch (err) {
-            console.error("Error during summary request:", err);
+            console.error("Error during paragraph request:", err);
           if (err.response.data.error) {
             setError(err.response.data.error);
           } else if (err.message) {
@@ -39,21 +39,21 @@ const SummaryScreen = () => {
             <Alert severity="error" sx={{mb: 2}}>{error}</Alert>
         </Collapse>
 
-        <form onSubmit={summaryHandler}>
-            <Typography variant="h3" mb={2}>Text Summarizer</Typography>
+        <form onSubmit={responseHandler}>
+            <Typography variant="h3" mb={2}>Chatbot</Typography>
             <Stack direction="row" spacing={1}>
                 <Box width="87%">
-                    <TextField multiline ="true" placeholder ="Enter text:" margin="normal" required fullWidth value ={text} onChange={(e) => setText(e.target.value)}/>
+                    <TextField multiline ="true" placeholder ="Enter question topic:" margin="normal" required fullWidth value ={text} onChange={(e) => setText(e.target.value)}/>
                 </Box>  
-                <Button disableElevation variant ="contained" type="submit" sx ={{color:"white"}}>Summarize</Button>
+                <Button disableElevation variant ="contained" type="submit" sx ={{color:"white"}}>Ask</Button>
             </Stack>   
         </form>
-        { summary ? 
-        <Card sx={{mt:4, p:2, border: 1, boxShadow:0, borderColor:"neutral.medium", borderRadius: 2, height: "500px", bgcolor: "background.default"}}>
-            <Typography variant="h3">{summary}</Typography>
+        { response ? 
+        <Card sx={{mt:4, p:2, border: 1, boxShadow:0, borderColor:"neutral.medium", borderRadius: 2, height: "300px", bgcolor: "background.default"}}>
+            <Typography variant="h4" fontWeight="bold" sx={{textAlign: "center", verticalAlign:"middle", lineHeight:"270px"}}>{response}</Typography>
         </Card> 
         : <Card sx={{mt:4, p:2, border: 1, boxShadow:0, borderColor:"neutral.medium", borderRadius: 2, height: "500px", bgcolor: "background.default"}}>
-                <Typography variant="h3" color="neutral.main" sx={{textAlign: "center", verticalAlign:"middle", lineHeight:"450px"}}>Summary will appear here:</Typography>
+                <Typography variant="h3" color="neutral.main" sx={{textAlign: "center", verticalAlign:"middle", lineHeight:"450px"}}>Response will appear here:</Typography>
             </Card>}
         <Typography variant="body1" sx={{mt: 2}}>Not the tool you were looking for? <Link href="/">Go back</Link></Typography>
         
@@ -61,4 +61,4 @@ const SummaryScreen = () => {
     )
 }
 
-export default SummaryScreen;
+export default ChatbotScreen;
