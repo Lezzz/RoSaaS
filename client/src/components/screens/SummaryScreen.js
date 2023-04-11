@@ -36,7 +36,7 @@ const SummaryScreen = () => {
     
 
     return (
-        <Box width={isNotMobile ? "40%" : "80%"} p="2rem" m="2rem auto" borderRadius={5} backgroundColor={theme.palette.background.alt} sx ={{boxShadow: 5}}>
+        <Box width={isNotMobile ? "50%" : "90%"} p="2rem" m="2rem auto" borderRadius={5} backgroundColor={theme.palette.background.alt} sx ={{boxShadow: 5}}>
         <Collapse in={error}>
             <Alert severity="error" sx={{mb: 2}}>{error}</Alert>
         </Collapse>
