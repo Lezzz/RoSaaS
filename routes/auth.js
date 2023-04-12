@@ -4,5 +4,5 @@ module.exports = function(app){
     app.post('/register', register);
     app.post('/login', login);
     app.post('/logout', logout);
-    app.post('/refresh-token', getRefreshToken);
+    app.get('/refresh-token', getRefreshToken);
 }

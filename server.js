@@ -6,10 +6,10 @@ const bodyParser = require('body-parser');
 const app=express();
 const mongoose = require('mongoose');
 const ErrorHandler = require('./middleware/error');
-const CookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 
 app.use(cors());
-app.use(CookieParser());
+app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ extended: true }));

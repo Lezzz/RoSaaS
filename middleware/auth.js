@@ -21,12 +21,14 @@ exports.protect = async (req, res, next) => {
         }
 
         const user = await User.findById(decoded.id);
+
         if (!user) {
             return next(new ErrorResponse('User not found, auth denied.', 404));
         }
 
         req.user = user;
         next();
+        
     } catch (err) {
         next(err);
     }

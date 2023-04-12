@@ -21,7 +21,7 @@ const LoginScreen = () => {
         e.preventDefault();
 
         try {
-            const {data} = await axios.post("/api/auth/login", {email, password}, config);
+            const {data} = await axios.post("/login", {email, password}, config);
                 if (data.token.accessToken) {
                     localStorage.setItem("authToken", true);
                     navigate("/");
