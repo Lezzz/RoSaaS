@@ -12,31 +12,49 @@ const HomeScreen = () => {
     const navigate = useNavigate();
     const [error, setError] = useState("");
     //price_1Mvw1dEuwdm0l6U90Nqsg4rY
-    const handleCheckout = async (e) => { 
+    const handleCheckout = async (e) => {
+        console.log('handleCheckout started'); // Debug log
         e.preventDefault();
         try {
             const token = await axios.get("/refresh-token");
-            if (token.data){
-                const config = {headers: {Authorization: `Bearer ${token.data}`, "Content-Type": "application/json"}};
+            console.log('Token:', token); // Debug log
+            let session;
+            if (token.data) {
+                const config = { headers: { Authorization: `Bearer ${token.data}`, "Content-Type": "application/json" } };
                 const sub = await axios.get("/subscription", config);
-                console.log(sub);
-                //navigate("/summary")
-                
+                console.log('Subscription:', sub); // Debug log
+                if (sub.data.subscription) {
+                    console.log('Checking for existing subscription'); // Debug log
+                    navigate("/summary");
+                } else {
+                    console.log('Creating a new checkout session');
+                    session = await axios.post("/checkout", { priceId: "price_1Mvw1dEuwdm0l6U90Nqsg4rY", sub: "normal" }, config);
+                    console.log('Session:', session); // Debug log
+                    console.log('Session data URL:', session.data.session.url); // Debug log
+                }
+                if (session && session.data && session.data.session.url) { 
+                    console.log('Session data URL:', session.data.session.url); // Debug log
+                    window.open(session.data.session.url, "_self");
+                }
             } else {
+                console.log('Session URL not found:', session); // Debug log
                 setError("Please login to continue.");
             }
-
         } catch (err) {
-            if (err.response.data.message){
+            if (err.response.data.message) {
                 setError(err.response.data.message);
-                setTimeout(() => {setError("");}, 3000);
+                setTimeout(() => { setError(""); }, 3000);
             } else if (err.message) {
                 setError(err.message);
-                setTimeout(() => {setError("");}, 3000);
+                setTimeout(() => { setError(""); }, 3000);
             }
             console.log(err);
         }
     }
+    
+    
+    
+    
 
     return (
         <Box p={2}>
