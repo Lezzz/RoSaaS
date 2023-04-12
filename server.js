@@ -10,9 +10,15 @@ const cookieParser = require('cookie-parser');
 
 app.use(cors());
 app.use(cookieParser());
-app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ extended: true }));
+
+
+var rawBodySaver = function (req, res, buf, encoding) {
+    if (buf && buf.length) {
+        req.rawBody = buf.toString(encoding || 'utf8');
+    }
+}
+app.use(bodyParser.json({verify: rawBodySaver, extended: true }));
 
 require('./routes')(app);
 
@@ -23,6 +29,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
     .then(() => {
         console.log('Connected to MongoDB');
         const port = process.env.PORT || 4242;
+        app.use(express.json());
         
         app.use(ErrorHandler)
 
