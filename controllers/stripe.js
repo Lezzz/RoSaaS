@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const mongoose = require('mongoose');
+
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const DOMAIN = "http://localhost:3000";
@@ -21,7 +23,7 @@ exports.createCheckout = async (req, res) => {
             ], 
             metadata: { 
                         user_id: JSON.stringify(user._id).substring(1, JSON.stringify(user._id).length - 1),
-                        subscrription: sub
+                        subscription: sub
                     
             },
             success_url: `${DOMAIN}/`,
@@ -54,86 +56,82 @@ exports.createWebhook = async (req, res) => {
             case 'checkout.session.completed': {
                 try {
                     console.log("Checkout session completed");
-                    const user_id = event.data.object.metadata.user_id;
-                    await stripe.customers.update (
+                    const user_id = new mongoose.Types.ObjectId(event.data.object.metadata.user_id);
+                    const subscription = event.data.object.metadata.subscription;
+
+                    console.log("User ID:", user_id); // Add this log
+                    console.log("Subscription:", subscription); // Add this log
+            
+                    await stripe.customers.update(
                         event.data.object.customer,
-                        { metadata: { user_id: user_id, sub: event.data.object.metadata.subscription } }
+                        { metadata: { user_id: user_id, sub: subscription } }
                     );
-                    const user = await User.findById(user_id);
+            
+                    const user = await User.findOne({ _id: user_id });
+                    const subscription_id = event.data.object.subscription;
+            
+                    const stripeSubscription = await stripe.subscriptions.retrieve(subscription_id);
+                    user.subscription = stripeSubscription.id;
                     user.customerId = event.data.object.customer;
                     await user.save();
+                    console.log("User updated:", user); // Add this log
                 } catch (err) {
                     console.log(err);
                     return res.status(404).send(`Webhook error: ${err.message}`);
                 }
-
+            
                 break;
             }
-            case 'payment_intent.succeeded': {
-                try {
-                    await timer(3000);
-                    const customer_id = event.data.object.customer;
-                    console.log("Payment intent succeeded");
-                    const customer = await stripe.customers.retrieve(customer_id);
-                    const user = await User.find({ customerId: customer_id});
-                    user[0].subscription = customer.metadata.sub;
-                    await user[0].save();
-                    } catch (err) {
-                        console.log(err);
-                        return res.status(400).send(`Webhook error: ${err.message}`);
-                    }
-
-                    break;
-            }
-            case 'payment_intent.succeeded': {
+            
+            case 'payment_intent.payment_failed': {
                 try {
                     await timer(3000);
                     const customer_id = event.data.object.customer;
                     console.log("Payment intent failure");
                     const customer = await stripe.customers.retrieve(customer_id);
-                    const user = await User.find({ customerId: customer_id});
-                    user[0].subscription = "";
-                    await user[0].save();
+                    const user = await User.findOne({ customerId: customer_id});
+                    user.subscription = "";
+                    await user.save();
                     
-                    } catch (err) {
-                        console.log(err);
-                        return res.status(400).send(`Webhook error: ${err.message}`);
-                    }
+                } catch (err) {
+                    console.log(err);
+                    return res.status(400).send(`Webhook error: ${err.message}`);
+                }
 
-                    break;
+                break;
             }
             case 'customer.subscription.deleted': {
                 try {
                     console.log("customer subscription deleted");
                     await timer(3000);
                     const customer_id = event.data.object.customer;
-                    
-                    const user = await User.find({ customerId: customer_id});
-                    user[0].subscription = "";
-                    await user[0].save();
-                    
-                    } catch (err) {
-                        console.log(err);
-                        return res.status(400).send(`Webhook error: ${err.message}`);
-                    }
 
-                    break;
+                    const user = await User.findOne({ customerId: customer_id });
+                    user.subscription = "";
+                    await user.save();
+
+                } catch (err) {
+                    console.log(err);
+                    return res.status(400).send(`Webhook error: ${err.message}`);
+                }
+
+                break;
             }
             case 'customer.deleted': {
                 try {
                     console.log("customer deleted");
                     const customer_id = event.data.object.customer;
-                    const user = await User.find({ customerId: customer_id});
-                    user[0].customerId= "";
-                    user[0].subscription = "";
-                    await user[0].save();
-                    
-                    } catch (err) {
-                        console.log(err);
-                        return res.status(400).send(`Webhook error: ${err.message}`);
-                    }
+                    const user = await User.findOne({ customerId: customer_id });
+                    user.customerId = "";
+                    user.subscription = "";
+                    await user.save();
 
-                    break;
+                } catch (err) {
+                    console.log(err);
+                    return res.status(400).send(`Webhook error: ${err.message}`);
+                }
+
+                break;
             }
             default:
                 // Unexpected event type
