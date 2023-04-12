@@ -13,25 +13,32 @@ import ChatbotScreen from './components/screens/ChatbotScreen';
 import JavaScriptScreen from './components/screens/JavaScriptScreen';
 import ImageScreen from './components/screens/ImageScreen';
 
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+//price_1Mvw1dEuwdm0l6U90Nqsg4rY
+
 function App() {
   const theme = useMemo(() => createTheme(themeSettings()), []);
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Navbar />
-        <Routes>
-          <Route exact path="/" element={<HomeScreen />} />
-          <Route exact path="/login" element={<LoginScreen />} />
-          <Route exact path="/register" element={<RegisterScreen />} />
-          <Route exact path="/summary" element={<SummaryScreen />} />
-          <Route exact path="/paragraph" element={<ParagraphScreen />} />
-          <Route exact path="/chatbot" element={<ChatbotScreen />} />
-          <Route exact path="/jsConvert" element={<JavaScriptScreen />} />
-          <Route exact path="/imageGen" element={<ImageScreen />} />
-        </Routes>
-      </ThemeProvider>
-    </div>
+    <Elements stripe={stripePromise}>
+      <div className="App">
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Navbar />
+          <Routes>
+            <Route exact path="/" element={<HomeScreen />} />
+            <Route exact path="/login" element={<LoginScreen />} />
+            <Route exact path="/register" element={<RegisterScreen />} />
+            <Route exact path="/summary" element={<SummaryScreen />} />
+            <Route exact path="/paragraph" element={<ParagraphScreen />} />
+            <Route exact path="/chatbot" element={<ChatbotScreen />} />
+            <Route exact path="/jsConvert" element={<JavaScriptScreen />} />
+            <Route exact path="/imageGen" element={<ImageScreen />} />
+          </Routes>
+        </ThemeProvider>
+      </div>
+    </Elements>
   );
 }
 

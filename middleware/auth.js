@@ -7,6 +7,7 @@ exports.protect = async (req, res, next) => {
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
+        console.log('Token:', token);
     }
 
     if (!token) {
@@ -15,12 +16,14 @@ exports.protect = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+        console.log('Decoded token:', decoded);
 
         if (!decoded.id) {
             return next(new ErrorResponse('Token verification failed, auth denied.', 401));
         }
 
         const user = await User.findById(decoded.id);
+        console.log('User found:', user);
 
         if (!user) {
             return next(new ErrorResponse('User not found, auth denied.', 404));

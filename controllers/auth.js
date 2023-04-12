@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const sendToken = (user, statusCode, res) => {
     const token = user.getSignedJwtToken(res);
-    res.status(statusCode).json({ success: true, token });
+    res.status(statusCode).json({ token });
 
 }
 
@@ -63,7 +63,7 @@ exports.logout = async (req, res) => {
 
     // Rest of your code
     res.clearCookie('refreshToken');
-    return res.status(200).json({ success: true, message: 'Logged out' });
+    return res.status(200).json({message: 'Logged out' });
 };
 
 exports.getRefreshToken = async (req, res) => {
@@ -73,7 +73,7 @@ exports.getRefreshToken = async (req, res) => {
         if (getToken) {
             const token = jwt.verify(getToken, process.env.JWT_REFRESH_SECRET);
             const accessToken = jwt.sign({ id: token.id }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_EXPIRE });
-            res.status(200).json({ success: true, accessToken });
+            res.status(200).json(accessToken);
         }
 
     } catch {
@@ -81,4 +81,20 @@ exports.getRefreshToken = async (req, res) => {
     }
 };
 
+exports.getSubscription = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+        res.status(200).json({subscription: user.subscription });
+    } catch (err) {
+        next(err);
+    }
+}
 
+exports.getCustomer = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+        res.status(200).json({customerId: user.customerId });
+    } catch (err) {
+        next(err);
+    }
+}
