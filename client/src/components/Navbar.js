@@ -36,12 +36,24 @@ const Navbar = () => {
                 localStorage.removeItem("authToken");
                 setLoggedIn(false);
                 logoutHandler();
+            } else {
+                const config = { headers: { Authorization: `Bearer ${token.data}`, "Content-Type": "application/json" } };
+                await axios.get("/subscription", config).then(res => checkSub(res.data));
             }
         } catch (err) {
             console.error(err);
         }
     };
 
+    const checkSub = async (data) => {
+        if (data.subscription) {
+            localStorage.setItem("sub", JSON.stringify(data.subscription));
+            console.log("Sub:", data.subscription);
+        } else {
+            localStorage.removeItem("sub");
+        }
+    }
+    
     useEffect(() => {
         const path = location.pathname;
         if (path !== '/login' && path !== '/register') {
