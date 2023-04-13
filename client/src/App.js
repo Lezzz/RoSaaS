@@ -15,6 +15,7 @@ import ImageScreen from './components/screens/ImageScreen';
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import PrivateRoute from './components/routing/PrivateRoute';
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 //price_1Mvw1dEuwdm0l6U90Nqsg4rY
 
@@ -30,7 +31,7 @@ function App() {
             <Route exact path="/" element={<HomeScreen />} />
             <Route exact path="/login" element={<LoginScreen />} />
             <Route exact path="/register" element={<RegisterScreen />} />
-            <Route exact path="/summary" element={<SummaryScreen />} />
+            <Route exact path="/summary" element={<PrivateRoute><SummaryScreen /></PrivateRoute>} />
             <Route exact path="/paragraph" element={<ParagraphScreen />} />
             <Route exact path="/chatbot" element={<ChatbotScreen />} />
             <Route exact path="/jsConvert" element={<JavaScriptScreen />} />
