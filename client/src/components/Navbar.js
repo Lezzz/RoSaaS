@@ -10,9 +10,23 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     const logoutHandler = async () => {
-        localStorage.removeItem("authToken");
-        navigate('/');
+        try {
+            // Add this line to call the API logout route
+            await axios.post('/logout', {}, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("authToken")}`,
+                }
+            });
+    
+            localStorage.removeItem("authToken");
+            setLoggedIn(false);
+            navigate('/');
+        } catch (err) {
+            console.error(err);
+        }
     };
+    
 
     const checkRefresh = async () => {
         try {
