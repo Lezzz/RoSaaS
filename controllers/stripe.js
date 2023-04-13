@@ -74,7 +74,7 @@ exports.createWebhook = async (req, res) => {
                     console.log("Checkout session completed");
                     const user_id = new mongoose.Types.ObjectId(event.data.object.metadata.user_id);
                     const subscription = event.data.object.metadata.subscription;
-
+            
                     console.log("User ID:", user_id); // Add this log
                     console.log("Subscription:", subscription); // Add this log
             
@@ -87,7 +87,10 @@ exports.createWebhook = async (req, res) => {
                     const subscription_id = event.data.object.subscription;
             
                     const stripeSubscription = await stripe.subscriptions.retrieve(subscription_id);
-                    user.subscription = stripeSubscription.id;
+                    
+                    // Update the user's subscription with the metadata subscription value
+                    user.subscription = subscription;
+                    
                     user.customerId = event.data.object.customer;
                     await user.save();
                     console.log("User updated:", user); // Add this log
@@ -98,6 +101,7 @@ exports.createWebhook = async (req, res) => {
             
                 break;
             }
+            
             
             case 'payment_intent.payment_failed': {
                 try {
