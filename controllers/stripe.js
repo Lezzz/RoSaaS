@@ -6,6 +6,22 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const DOMAIN = "http://localhost:3000";
 const timer = ms => new Promise(res => setTimeout(res, ms));
 
+exports.createPortal = async (req, res) => {
+    const {customerId} = req.body;
+    try {
+        const portalSession = await stripe.billingPortal.sessions.create({
+            customer: customerId,
+            return_url: `${DOMAIN}/`
+        });
+        // Return the portal URL instead of the entire portalSession object
+        return res.status(200).json({ url: portalSession.url });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+
 exports.createCheckout = async (req, res) => {
     const {priceId, sub} = req.body;
 
